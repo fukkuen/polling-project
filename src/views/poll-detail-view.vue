@@ -1,6 +1,7 @@
 <template>
   <div>
     detail view
+    <poll-card></poll-card>
   </div>
 </template>
 

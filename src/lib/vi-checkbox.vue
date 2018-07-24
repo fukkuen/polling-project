@@ -53,11 +53,9 @@
           if (this.isChecked) newValue.splice(newValue.indexOf(this.value), 1)
           else newValue.push(this.value)
         } else {
-          // console.log('hi', newValue)
           if (this.isChecked) newValue = ''
           else newValue = this.value
         }
-        console.log('hi', newValue)
         this.$emit('input', newValue)
       }
     }

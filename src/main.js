@@ -6,6 +6,8 @@ import router from './router'
 import store from './store'
 // globally register UI Library
 import './lib'
+// globally register common components across pages
+import './components'
 
 Vue.config.productionTip = false
 

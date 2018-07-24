@@ -1,10 +1,9 @@
 <template>
   <div>
-    list view
-    <router-link :to="{name: 'poll-detail', params: {id: 1}}">go to detail</router-link>
-    {{polls}}
-    <vi-checkbox name="checkbox-checked" label="name" :input-value="true"/>
-    <vi-button>sdf</vi-button>
+    <div v-if="!polls">loading...</div>
+    <template v-else>
+      <poll-card :poll-data="polls[0]"></poll-card>
+    </template>
   </div>
 </template>
 
