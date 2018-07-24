@@ -8,6 +8,10 @@ import store from './store'
 import './lib'
 // globally register common components across pages
 import './components'
+// globally register filter
+import './filter'
+// global css style import
+import './lib/app.styl'
 
 Vue.config.productionTip = false
 
