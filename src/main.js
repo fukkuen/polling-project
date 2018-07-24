@@ -4,6 +4,8 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import store from './store'
+// globally register UI Library
+import './lib'
 
 Vue.config.productionTip = false
 
