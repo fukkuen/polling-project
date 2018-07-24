@@ -1,7 +1,7 @@
 <template>
   <div class="poll-card" :class="{'poll-card--single': single}">
     <transition name="fade-transition">
-      <div v-if="submitted" class="vi-message">Thank you for the voting!</div>
+      <div v-if="showMessage" class="vi-message">Thank you for the voting!</div>
     </transition>
     <div class="poll-card__t single-show-lg">
       <div class="poll-card__title">{{pollData.title}}</div>
@@ -67,7 +67,8 @@
     return {
       selected: '',
       colors: ['#E1682F', '#133460', 'red', 'blue', 'green', 'purple', 'orange', 'black'],
-      submitted: false
+      submitted: false,
+      showMessage: false
     }
   },
   computed: {
@@ -81,19 +82,20 @@
   methods: {
     async submit (selected) {
       this.submitted = true
+      this.showMessage = true
       await this.$store.dispatch('submitAnswer', {
         pollId: this.pollData.id,
         answerIds: this.isMultiple ? this.selected : [selected]
       })
-      // TODO: show a success message
-      console.log('submited')
-      if (this.single) {
-        setTimeout(() => {
+
+      setTimeout(() => {
+        this.showMessage = false
+        if (this.single) {
           this.$router.push({
             name: 'poll-list'
           })
-        }, 2000)
-      }
+        }
+      }, 2000)
     }
   }
 }
