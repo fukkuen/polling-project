@@ -1,5 +1,15 @@
 $primary := #E1682F
 $secondary := #133460
+$light-grey := #777777
 $blue-text := #225A84
 $headerFont := "Times New Roman", Times, serif
 $pageFont := 'Lato', Helvetica, Arial, sans-serif
+
+screen(size)
+  @media(max-width: size)
+    {block}
+
+screen-up(size)
+  @media(min-width: size)
+    {block}
+
