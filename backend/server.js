@@ -11,15 +11,17 @@ app.get('/api/polling-list', async (req, res) => {
   })
 })
 
-app.post('/api/submit-polling', (req, res) => {
+app.post('/api/submit-answer', (req, res) => {
   // fs.writeFile('./data.json', 'abc')
   fs.readFile('./data.json', 'utf8', (err, data) => {
     if (err) throw err
-    const id = req.body.id
+    const id = req.body.pollId
     const answerIds = req.body.answerIds
     if (!id || !answerIds) return
     const list = [...JSON.parse(data)]
-    const item = list.find(item => item.id === id)
+    console.log('id', id)
+    const item = list.find(item => item.id === parseInt(id))
+    console.log(item)
     item.counts++
     answerIds.forEach(ans => {
       const _answer = item.answer.options.find(opt => opt.id === ans)

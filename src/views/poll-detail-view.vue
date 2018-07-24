@@ -9,7 +9,7 @@
 
 <script>
 export default {
-  name: 'poll-list-view',
+  name: 'poll-detail-view',
 
   computed: {
     $pollId () {
@@ -17,8 +17,14 @@ export default {
     },
     pollItem () {
       const pollList = this.$store.state.polls
-      return pollList.find(item => item.id === this.$pollId)
+      if (!pollList) return
+      console.log('here', pollList)
+      return pollList.find(item => item.id === Number(this.$pollId))
     }
+  },
+
+  created () {
+    if (!this.pollItem) this.$store.dispatch('getPolls')
   }
 }
 </script>

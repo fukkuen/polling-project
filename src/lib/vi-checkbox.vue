@@ -24,11 +24,15 @@
       value: {
         type: String | Number,
         required: false
+      },
+      multiple: {
+        type: Boolean,
+        required: false
       }
     },
     computed: {
       isMultiple () {
-        return Array.isArray(this.inputValue)
+        return this.multiple || Array.isArray(this.inputValue)
       },
       isBoolean () {
         return typeof this.inputValue === 'boolean'
@@ -70,6 +74,7 @@
     align-items center
     cursor pointer
     font-size 18px
+    user-select none
 
     &__label
       margin-left 8px

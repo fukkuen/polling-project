@@ -1,8 +1,20 @@
 <template>
-  <button @click="$emit('click')" class="vi-button">
+  <button @click="$emit('click')" class="vi-button" :class="{'vi-button--disabled': disabled}">
     <slot></slot>
   </button>
 </template>
+
+<script>
+  export default {
+    name: 'vi-button',
+    props: {
+      disabled: {
+        type: Boolean,
+        required: false
+      }
+    }
+  }
+</script>
 
 <style lang="stylus">
   @import './main.styl'
@@ -34,4 +46,10 @@
     &:hover,
     &:focus
       background lighten($primary, 10%)
+
+    &--disabled
+      background rgba(0,0,0,0.1) !important
+      color rgba(255,255,255,0.4) !important
+      // background rgba(255,255,255,0.4) !important
+      pointer-events none !important
 </style>

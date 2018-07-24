@@ -12,9 +12,29 @@
             {{pollData.title}}
             <span class="el-headline">{{pollData.publishedDate | date}}</span>
           </div>
-          <vi-checkbox v-for="opt in options" :key="opt.id" v-model="selected" :value="opt.id" :label="opt.label"/>
+          <template v-if="isMultiple">
+            <vi-checkbox
+              :style="{color: colors[i]}"
+              v-for="(opt, i) in options"
+              :key="opt.id"
+              :multiple="isMultiple"
+              v-model="selected"
+              :value="opt.id"
+              :label="opt.label"/>
+            <vi-button @click="submit" :disabled="!Array.isArray(selected) || selected.length === 0">Submit</vi-button>
+          </template>
+          <template v-else>
+            <vi-button
+              v-for="(opt, i) in options"
+              :key="opt.id"
+              @click="submit"
+            >opt.label</vi-button>
+          </template>
         </div>
         <div class="poll-card__r">
+          <div v-if="insufficientData" class="chart-placeholder">
+            insufficient data
+          </div>
           <div id="chart1"></div>
         </div>
       </div>
@@ -42,7 +62,8 @@ export default {
   },
   data () {
     return {
-      selected: ''
+      selected: '',
+      colors: ['#E1682F', '#133460', 'red', 'blue', 'green', 'purple', 'orange', 'black']
     }
   },
   computed: {
@@ -50,23 +71,30 @@ export default {
       return this.pollData.answer.options
     },
     isMultiple () {
-      return this.pollData.answer.type === 'Multiple'
+      return this.pollData.answer.type === 'Multi'
+    },
+    insufficientData () {
+      // TODO: product question - how much to be sufficient
+      return this.pollData.counts < 5
     }
   },
   methods: {
+    submit () {
+      this.$store.dispatch('submitAnswer', {
+        pollId: this.pollData.id,
+        answerIds: this.isMultiple ? this.selected : [this.selected]
+      })
+    },
     drawChart () {
-      // TODO use real data ...optionData
       const optionData = this.options.map(opt => {
         return [opt.label, opt.counts]
       })
       const data = google.visualization.arrayToDataTable([
         ['Answer', 'Counts'],
-        ['Yes', 1],
-        ['No', 2]
+        ...optionData
       ])
-
       const options = {
-        colors: ['#E1682F', '#133460'],
+        colors: this.colors,
         height: 180,
         width: 180,
         pieHole: 0.4,
@@ -86,6 +114,7 @@ export default {
     }
   },
   mounted () {
+    if (this.insufficientData) return
     GoogleCharts.load(this.drawChart)
   }
 }
@@ -166,6 +195,10 @@ export default {
 
     rect
       display none
+
+    .vi-checkbox
+      display flex
+      margin-bottom 8px
 
   .single-show
     display none

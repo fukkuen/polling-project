@@ -25,10 +25,9 @@ let store = new Vuex.Store({
 
     async submitAnswer ({commit}, {pollId, answerIds}) {
       try {
-        const res = await http.post('/submit-answer', {
+        return http.post('/submit-answer', {
           pollId, answerIds
         })
-        commit('gotPolls', res)
       } catch (e) {}
     }
   }
