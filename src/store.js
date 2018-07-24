@@ -23,11 +23,13 @@ let store = new Vuex.Store({
       } catch (e) {}
     },
 
-    async submitAnswer ({commit}, {pollId, answerIds}) {
+    async submitAnswer ({commit, dispatch}, {pollId, answerIds}) {
       try {
-        return http.post('/submit-answer', {
+        await http.post('/submit-answer', {
           pollId, answerIds
         })
+        await dispatch('getPolls')
+        return 'done'
       } catch (e) {}
     }
   }

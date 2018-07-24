@@ -1,10 +1,14 @@
 <template>
   <div class="poll-card" :class="{'poll-card--single': single}">
+    <transition name="fade-transition">
+      <div v-if="submitted" class="vi-message">Thank you for the voting!</div>
+    </transition>
     <div class="poll-card__t single-show-lg">
       <div class="poll-card__title">{{pollData.title}}</div>
       <div class="poll-card__date"><span class="allcap">Published:</span> {{pollData.publishedDate | dateTime}}</div>
     </div>
     <div class="poll-card__main">
+      <!-- TODO: product question: maybe not necessary to be today, could be within a week -->
       <div class="poll-card__headline single-hide">Today's Poll</div>
       <div class="poll-card__row">
         <div class="poll-card__l">
@@ -17,6 +21,7 @@
               :style="{color: colors[i]}"
               v-for="(opt, i) in options"
               :key="opt.id"
+              :disabled="submitted"
               :multiple="isMultiple"
               v-model="selected"
               :value="opt.id"
@@ -24,18 +29,18 @@
             <vi-button @click="submit" :disabled="!Array.isArray(selected) || selected.length === 0">Submit</vi-button>
           </template>
           <template v-else>
-            <vi-button
-              v-for="(opt, i) in options"
-              :key="opt.id"
-              @click="submit"
-            >opt.label</vi-button>
+            <div v-for="(opt, i) in options" style="margin-bottom: 10px">
+              <vi-button
+                :disabled="submitted"
+                :style="{background: colors[i]}"
+                :key="opt.id"
+                @click="submit(opt.id)"
+              >{{opt.label}}</vi-button>
+            </div>
           </template>
         </div>
         <div class="poll-card__r">
-          <div v-if="insufficientData" class="chart-placeholder">
-            insufficient data
-          </div>
-          <div id="chart1"></div>
+          <donut-chart :poll-data="pollData"/>
         </div>
       </div>
       <div class="poll-card__count">Total number of votes recorded: {{pollData.counts}}</div>
@@ -44,9 +49,7 @@
 </template>
 
 <script>
-import {GoogleCharts} from 'google-charts';
-
-export default {
+  export default {
   name: 'poll-card',
   props: {
     pollData: {
@@ -58,12 +61,13 @@ export default {
       type: Boolean,
       required: false,
       default: false
-    }
+    },
   },
   data () {
     return {
       selected: '',
-      colors: ['#E1682F', '#133460', 'red', 'blue', 'green', 'purple', 'orange', 'black']
+      colors: ['#E1682F', '#133460', 'red', 'blue', 'green', 'purple', 'orange', 'black'],
+      submitted: false
     }
   },
   computed: {
@@ -72,50 +76,25 @@ export default {
     },
     isMultiple () {
       return this.pollData.answer.type === 'Multi'
-    },
-    insufficientData () {
-      // TODO: product question - how much to be sufficient
-      return this.pollData.counts < 5
     }
   },
   methods: {
-    submit () {
-      this.$store.dispatch('submitAnswer', {
+    async submit (selected) {
+      this.submitted = true
+      await this.$store.dispatch('submitAnswer', {
         pollId: this.pollData.id,
-        answerIds: this.isMultiple ? this.selected : [this.selected]
+        answerIds: this.isMultiple ? this.selected : [selected]
       })
-    },
-    drawChart () {
-      const optionData = this.options.map(opt => {
-        return [opt.label, opt.counts]
-      })
-      const data = google.visualization.arrayToDataTable([
-        ['Answer', 'Counts'],
-        ...optionData
-      ])
-      const options = {
-        colors: this.colors,
-        height: 180,
-        width: 180,
-        pieHole: 0.4,
-        legend: 'none',
-        fontSize: 20,
-        chartArea: {
-          left: 0,
-          top: 0,
-          width: '100%',
-          height: '100%',
-          backgroundColor: '#fdc'
-        }
+      // TODO: show a success message
+      console.log('submited')
+      if (this.single) {
+        setTimeout(() => {
+          this.$router.push({
+            name: 'poll-list'
+          })
+        }, 2000)
       }
-
-      const chart = new google.visualization.PieChart(document.getElementById('chart1'))
-      chart.draw(data, options)
     }
-  },
-  mounted () {
-    if (this.insufficientData) return
-    GoogleCharts.load(this.drawChart)
   }
 }
 </script>
@@ -188,6 +167,7 @@ export default {
 
     &__count
       font-size 12px
+      margin-top 16px
 
       +screen(600px)
         margin-top 16px

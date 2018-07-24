@@ -18,7 +18,6 @@ export default {
     pollItem () {
       const pollList = this.$store.state.polls
       if (!pollList) return
-      console.log('here', pollList)
       return pollList.find(item => item.id === Number(this.$pollId))
     }
   },

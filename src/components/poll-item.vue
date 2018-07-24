@@ -1,7 +1,7 @@
 <template>
   <div class="poll-item">
     <div class="poll-item__l">
-      x
+      <donut-chart small :poll-data="pollData"></donut-chart>
     </div>
     <div class="poll-item__r">
       <div class="el-headline">{{pollData.publishedDate | date}}</div>
