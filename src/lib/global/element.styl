@@ -4,6 +4,23 @@
   color $blue-text
   font-size 12px
   font-family $pageFont
+  text-transform uppercase
 
 .allcap
   text-transform uppercase !important
+
+.vi-row
+  display flex
+  flex-wrap wrap
+
+for n in (1..12)
+  .vi-col-{n}
+    flex-basis (n / 12 * 100)%
+    flex-grow 0
+    max-width (n / 12 * 100)%
+
+  +screen(600px)
+    .vi-col-{n}-xs
+      flex-basis (n / 12 * 100)%
+      flex-grow 0
+      max-width (n / 12 * 100)%
